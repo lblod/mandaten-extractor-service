@@ -133,6 +133,9 @@ async function ensureUUID(graph) {
         GRAPH ${sparqlEscapeUri(graph)} {
            ${sparqlEscapeUri(subject)} mu:uuid ${sparqlEscapeString(id)}.
         }
+        GRAPH <http://mu.semte.ch/graphs/mandaten-extractor/uuid-cache/> {
+           ${sparqlEscapeUri(subject)} mu:uuid ${sparqlEscapeString(id)}.
+        }
       }
     `);
   }
