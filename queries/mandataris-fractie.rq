@@ -17,6 +17,7 @@ GRAPH $tmpGraph {
     ?mandataris org:hasMembership ?lidmaatschap.
   }
   OPTIONAL {
+   ?lidmaatschap org:organisation ?fractie;
    ?lidmaatschap org:memberDuring ?tijdsinterval.
    ?tijdsinterval ?tp ?to.
    }
