@@ -9,7 +9,7 @@
   }
   WHERE {
     GRAPH $tmpGraph {
-    ?artikel a besluit:Artikel.
+    ?artikel a ?type.
     ?artikel ?mandaatRelatie ?mandataris.
     ?mandataris a mandaat:Mandataris.
     OPTIONAL {?mandataris org:holds ?mandaat.}
@@ -18,6 +18,9 @@
     OPTIONAL {?mandataris mu:uuid ?uuid.}
     OPTIONAL {?mandataris mandaat:einde ?einde.}
     OPTIONAL {?mandataris mandaat:status ?status.}
+    OPTIONAL  {?mandataris mandaat:rangorde ?rangorde}
     VALUES ?mandaatRelatie { mandaat:bekrachtigtAanstellingVan ext:bekrachtigtAanstellingVan}
+    VALUES ?type { besluit:Artikel besluit:Besluit }
     }
+    ?mandaat ?p ?o.
   }
