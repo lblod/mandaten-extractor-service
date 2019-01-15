@@ -28,12 +28,12 @@ async function writeDatasetToFile(mandatenDataset, filename) {
 /**
  * add some metadata to the database for each created dataset
  * @method writeMetaOfDatasetToDatabase
+ * @param {String} decision uri of the decision this dataset was based on.
+ * @param {String} bestuurseenheid uri of the eenheid
  * @param {String} path
  * @param {String} filename
- * @param {String} decision uri of the decision this dataset was based on.
  */
-async function writeMetaOfDatasetToDatabase(path, filename, decision, eenheid) {
-  const convertedPath = path.replace(/\/share\//g,'share://');
+async function writeMetaOfDatasetToDatabase(decision, eenheid, path=null, filename=null) {
   const id = uuid();
   await update(`
       ${PREFIXES}
@@ -44,12 +44,31 @@ async function writeMetaOfDatasetToDatabase(path, filename, decision, eenheid) {
                                                        mu:uuid ${sparqlEscapeString(id)};
                                                        dcterms:created ${sparqlEscapeDateTime(new Date())};
                                                        dcterms:publisher ${sparqlEscapeUri(eenheid)}.
-             ${sparqlEscapeUri(convertedPath)} a nfo:FileDataObject;
-                                               nfo:fileName ${sparqlEscapeString(filename)};
-                                               nie:dataSource <http://data.lblod.info/datasets/${id}>.
           }
       }
 `);
+  if (filename && path) {
+    const convertedPath = path.replace(/\/share\//g,'share://');
+    await update(`
+       ${PREFIXES}
+       INSERT DATA {
+        GRAPH <http://mu.semte.ch/graphs/mandanten-extractor/> {
+             ${sparqlEscapeUri(convertedPath)} a nfo:FileDataObject;
+                                               nfo:fileName ${sparqlEscapeString(filename)};
+                                               nie:dataSource <http://data.lblod.info/datasets/${id}>.
+        }
+      }
+    `);
+  }
+  else {
+    await update(`
+      ${PREFIXES}
+      INSERT DATA {
+        GRAPH <http://mu.semte.ch/graphs/mandanten-extractor/> {
+          <http://data.lblod.info/datasets/${id}> void:triples 0.
+        }
+      }`);
+  }
 }
 
 /**

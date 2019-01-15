@@ -1,5 +1,6 @@
 import { getDecisions,
-         buildTempGraphFromDecision
+         buildTempGraphFromDecision,
+         unprocessedDecisionsExist
        } from './support/decision';
 import {writeMetaOfDatasetToDatabase, extractMandatenDataset, writeDatasetToFile} from './support/dataset';
 import { eenheidForOrgaan, removeTempGraph} from './support/support';
@@ -11,28 +12,36 @@ function sha1(string) {
   return crypto.createHash('sha1').update(string).digest('hex');
 }
 
-app.post('/extract-mandaten', async function(req, res, next) {
-  try {
-    for (const decision of await getDecisions()) {
+async function processDecisions() {
+  for (const decision of await getDecisions()) {
+    try {
+      const graph = await buildTempGraphFromDecision(decision.content);
       try {
-        const graph = await buildTempGraphFromDecision(decision.content);
-        try {
-          const mandatenDataset = await extractMandatenDataset(graph);
-          const orgaan = decision.orgaan;
-          const bestuurseenheid = await eenheidForOrgaan(orgaan);
+        const mandatenDataset = await extractMandatenDataset(graph);
+        const orgaan = decision.orgaan;
+        const bestuurseenheid = await eenheidForOrgaan(orgaan);
+        if (mandatenDataset !== "") {
           const timestamp=new Date();
           const filename = `${bestuurseenheid.id}-mandaten-from-${decision.id}-${timestamp.toISOString().substring(0,10)}.ttl`;
           const path = await writeDatasetToFile(mandatenDataset, filename);
-          await writeMetaOfDatasetToDatabase(path, filename, decision.uri);
+          await writeMetaOfDatasetToDatabase(path, filename, decision.uri, bestuurseenheid.uri);
         }
-        finally {
-          await removeTempGraph(graph);
-        }
+        await writeMetaOfDatasetToDatabase(decision.uri, bestuurseenheid.uri);
       }
-      catch(e) {
-        console.error(e);
-        throw e; //rethrow
+      finally {
+        await removeTempGraph(graph);
       }
+    }
+    catch(e) {
+      console.error(e);
+      throw e; //rethrow
+    }
+  }
+}
+app.post('/extract-mandaten', async function(req, res, next) {
+  try {
+    while(await unprocessedDecisionsExist()) {
+      await processDecisions();
     }
     res.send({success: true});
   }
