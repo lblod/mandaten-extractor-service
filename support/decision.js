@@ -9,7 +9,7 @@ import { PREFIXES } from './support';
  * @return {Boolean}
  */
 async function unprocessedDecisionsExist() {
-  return await( query(`
+  const r = await( query(`
       ${PREFIXES}
       ASK {
       ?decision a besluit:Besluit;
@@ -27,6 +27,7 @@ async function unprocessedDecisionsExist() {
                     a ext:MandatenDataset;
                     pav:derivedFrom ?decision.
       })}`));
+  return r.boolean;
 }
 
 /**
