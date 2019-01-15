@@ -31,8 +31,10 @@ async function eenheidForOrgaan(orgaan) {
           }`);
   if (result.results.bindings.length === 1)
     return {id: result.results.bindings[0].id.value, uri: result.results.bindings[0].eenheid.value};
-  else
+  else {
+    console.log(result.results.bindings);
     throw "expected only one eenheid";
+  }
 }
 
 export {

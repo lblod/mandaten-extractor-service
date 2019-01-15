@@ -4,6 +4,8 @@ CONSTRUCT {
 ?lidmaatschap a org:Membership;
               ?lp ?lo.
 ?mandataris org:hasMembership ?lidmaatschap.
+?tijdsinterval ?tp ?to.
+
 }
 WHERE {
 GRAPH $tmpGraph {
@@ -14,5 +16,9 @@ GRAPH $tmpGraph {
                   ?lp ?lo.
     ?mandataris org:hasMembership ?lidmaatschap.
   }
+  OPTIONAL {
+   ?lidmaatschap org:memberDuring ?tijdsinterval.
+   ?tijdsinterval ?tp ?to.
+   }
 }
 }

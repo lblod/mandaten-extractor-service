@@ -1,4 +1,4 @@
-import { uuid, update, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
+import { uuid, query, update, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeUri } from 'mu';
 import fs from 'fs-extra';
 import { StringDecoder } from 'string_decoder';
 import request from 'request';
@@ -113,6 +113,31 @@ async function turtleQuery(query) {
   });
 }
 
+async function ensureUUID(graph) {
+  const response = await query(
+    `  ${PREFIXES}
+       SELECT ?subject ?id WHERE {
+       GRAPH ${sparqlEscapeUri(graph)} {
+         ?subject a ?type
+       }
+       OPTIONAL { ?subject mu:uuid ?id.}
+     }`);
+  const map = new Map(response.results.bindings.map( ({subject, id}) => {
+    return [subject.value, id ? id.value : uuid()];
+  } ));
+  for (var [subject, id] of map) {
+    console.log(subject,id);
+    await update(`
+      ${PREFIXES}
+      INSERT DATA {
+        GRAPH ${sparqlEscapeUri(graph)} {
+           ${sparqlEscapeUri(subject)} mu:uuid ${sparqlEscapeString(id)}.
+        }
+      }
+    `);
+  }
+}
+
 /**
  * This method will run any construct query in /app/queries on the provided graph.
  * The result of these queries is joined and returned as a string
@@ -123,6 +148,7 @@ async function turtleQuery(query) {
  */
 async function extractMandatenDataset(graph) {
   var data="";
+  await ensureUUID(graph);
   for (const queryString of await getQueries()) {
     const executableQuery = queryString.replace(/\$tmpGraph/g,sparqlEscapeUri(graph));
     if (executableQuery.includes(graph)) {
