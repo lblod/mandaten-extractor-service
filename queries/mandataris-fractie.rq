@@ -1,0 +1,18 @@
+CONSTRUCT {
+?fractie a mandaat:Fractie;
+         ?p ?o.
+?lidmaatschap a org:Membership;
+              ?lp ?lo.
+?mandataris org:hasMembership ?lidmaatschap.
+}
+WHERE {
+GRAPH $tmpGraph {
+  ?fractie a mandaat:Fractie;
+           ?p ?o.
+  OPTIONAL {
+    ?lidmaatschap org:organisation ?fractie;
+                  ?lp ?lo.
+    ?mandataris org:hasMembership ?lidmaatschap.
+  }
+}
+}

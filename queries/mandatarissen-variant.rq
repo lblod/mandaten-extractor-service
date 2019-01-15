@@ -1,0 +1,24 @@
+  CONSTRUCT {
+      ?mandataris a mandaat:Mandataris;
+                  org:holds ?mandaat;
+                  mandaat:isBestuurlijkeAliasVan ?persoon;
+                  mu:uuid ?uuid;
+                  mandaat:start ?start;
+                  mandaat:einde ?einde;
+                  mandaat:status ?status.
+  }
+  WHERE {
+    GRAPH $tmpGraph {
+    ?artikel a besluit:Besluit.
+    ?artikel ?mandaatRelatie ?mandataris.
+    ?mandataris a mandaat:Mandataris.
+    OPTIONAL {?mandataris org:holds ?mandaat.}
+    OPTIONAL {?mandataris mandaat:isBestuurlijkeAliasVan ?persoon.}
+    OPTIONAL {?mandataris mandaat:start ?start.}
+    OPTIONAL {?mandataris mu:uuid ?optionalID.}
+    OPTIONAL {?mandataris mandaat:einde ?einde.}
+    OPTIONAL {?mandataris mandaat:status ?status.}
+    BIND(IF(BOUND(?optionalID), ?optionalID, STRUUID()) as ?uuid) .
+    VALUES ?mandaatRelatie { mandaat:bekrachtigtAanstellingVan ext:bekrachtigtAanstellingVan}
+    }
+  }
