@@ -18,7 +18,7 @@ GRAPH $tmpGraph {
   }
   OPTIONAL {
    ?lidmaatschap org:organisation ?fractie;
-   ?lidmaatschap org:memberDuring ?tijdsinterval.
+                 org:memberDuring ?tijdsinterval.
    ?tijdsinterval ?tp ?to.
    }
 }
