@@ -1,0 +1,40 @@
+CONSTRUCT {
+    ?mandataris a mandaat:Mandataris;
+                org:holds ?mandaat;
+                mandaat:isBestuurlijkeAliasVan ?persoon;
+                mu:uuid ?uuid;
+                mandaat:rangorde ?rangorde;
+                mandaat:start ?start;
+                mandaat:einde ?einde;
+                ext:generatedFrom "mandaten-extractor-service";
+                mandaat:status ?status.
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+          ?mandaat org:role <http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000014>. #schepen
+          ?collegeInTijd org:hasPost ?mandaat.
+          ?college besluit:classificatie  <http://data.vlaanderen.be/id/concept/BestuursorgaanClassificatieCode/5ab0e9b8a3b2ca7c5e000006>. # college
+          ?collegeInTijd mandaat:bindingStart "2019-01-01"^^xsd:date.
+          ?collegeInTijd mandaat:isTijdspecialisatieVan ?college.
+          ?college besluit:bestuurt ?eenheid.
+          ?orgaan besluit:bestuurt ?eenheid.
+          ?orgaanInTijd  mandaat:isTijdspecialisatieVan ?orgaan.
+          ?zitting besluit:isGehoudenDoor ?orgaanInTijd.
+          ?zitting besluit:heeftAgenda ?agenda.
+          ?agenda besluit:heeftAgendapunt ?agendapunt.
+          ?bav dct:subject ?agendapunt.
+          ?bav prov:generated ?besluit.
+  }
+
+  GRAPH $tmpGraph {
+    ?besluit  <http://mu.semte.ch/vocabularies/ext/schepenenAanstellingTable> ?tableContent. # I forgot to put org:holds in rdfa. A hack.
+    ?besluit eli:has_part ?artikel.
+    ?artikel ext:bekrachtigtAanstellingVan ?mandataris
+    OPTIONAL {?mandataris mandaat:isBestuurlijkeAliasVan ?persoon.}
+    OPTIONAL {?mandataris mandaat:start ?start.}
+    OPTIONAL {?mandataris mu:uuid ?uuid.}
+    OPTIONAL {?mandataris mandaat:einde ?einde.}
+    OPTIONAL {?mandataris mandaat:status ?status.}
+    OPTIONAL {?mandataris mandaat:rangorde ?rangorde}
+   }
+}
