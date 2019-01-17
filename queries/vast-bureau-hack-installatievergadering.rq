@@ -1,3 +1,4 @@
+# note: voorzitter is burgemeester, will be in different query
 CONSTRUCT {
     ?newMandataris a mandaat:Mandataris;
                 org:holds ?mandaat;
@@ -38,6 +39,6 @@ WHERE {
     OPTIONAL {?mandataris mandaat:status ?status.}
    }
 
-  BIND(SHA256(CONCAT(STR(?mandataris), "lid-vast-bureau", "9d71409f-98b8-4595-9ef6-fb1551096339")) as ?newMandatarisUuid) . # add randomness, since UUID is buggy
+  BIND(SHA256(CONCAT(STR(?mandataris), "lid-vast-bureau", "9d71409f-98b8-4595-9ef6-fb1551096339")) as ?newMandatarisUuid) .
   BIND(IRI(CONCAT("http://data.lblod.info/id/mandatarissen/", ?newMandatarisUuid)) AS ?newMandataris) .
 }
