@@ -21,8 +21,8 @@ async function processDecisions() {
         const orgaan = decision.orgaan;
         const bestuurseenheid = await eenheidForOrgaan(orgaan);
         if (mandatenDataset !== "") {
-          const timestamp=new Date();
-          const filename = `${bestuurseenheid.id}-mandaten-from-${decision.id}-${timestamp.toISOString().substring(0,10)}.ttl`;
+          const timestamp= new Date().toISOString().substring(0,19).replace(/[-T:]/g, '');
+          const filename = `${timestamp}-g-n-${bestuurseenheid.id}-mandaten-${decision.id}.ttl`;
           const path = await writeDatasetToFile(mandatenDataset, filename);
           await writeMetaOfDatasetToDatabase(decision.uri, bestuurseenheid.uri, path, filename);
         }
