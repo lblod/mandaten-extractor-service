@@ -1,0 +1,43 @@
+CONSTRUCT {
+    ?newMandataris a mandaat:Mandataris;
+                org:holds ?mandaat;
+                mandaat:isBestuurlijkeAliasVan ?persoon;
+                mu:uuid ?uuid;
+                mandaat:start ?start;
+                mandaat:einde ?einde;
+                ext:generatedFrom "mandaten-extractor-service";
+                mandaat:status ?status.
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+          ?mandaat org:role <http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000017>. #lid vast bureau
+          ?ocmwInTijd org:hasPost ?mandaat.
+          ?ocmwInTijd mandaat:bindingStart "2019-01-01"^^xsd:date.
+          ?ocmwInTijd mandaat:isTijdspecialisatieVan ?ocmw.
+          ?ocmw besluit:bestuurt ?ocmwEenheid.
+          ?ocmwEenheid besluit:werkingsgebied ?werkingsgebied.
+          ?ocmwEenheid besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000002>.
+          ?eenheid besluit:werkingsgebied ?werkingsgebied .
+          ?orgaan besluit:bestuurt ?eenheid.
+          ?orgaanInTijd  mandaat:isTijdspecialisatieVan ?orgaan.
+          ?zitting besluit:isGehoudenDoor ?orgaanInTijd.
+          ?zitting besluit:heeftAgenda ?agenda.
+          ?agenda besluit:heeftAgendapunt ?agendapunt.
+          ?bav dct:subject ?agendapunt.
+          ?bav prov:generated ?besluit.
+  }
+
+  GRAPH $tmpGraph {
+    ?besluit  <http://mu.semte.ch/vocabularies/ext/schepenenAanstellingTable> ?tableContent. # I forgot to put org:holds in rdfa. A hack.
+    ?besluit eli:has_part ?artikel.
+    ?artikel ext:bekrachtigtAanstellingVan ?mandataris
+    OPTIONAL {?mandataris mandaat:isBestuurlijkeAliasVan ?persoon.}
+    OPTIONAL {?mandataris mandaat:start ?start.}
+    OPTIONAL {?mandataris mu:uuid ?uuid.}
+    OPTIONAL {?mandataris mandaat:einde ?einde.}
+    OPTIONAL {?mandataris mandaat:status ?status.}
+   }
+
+  BIND(SHA256(CONCAT(STR(?mandataris), "lid-vast-bureau", "9d71409f-98b8-4595-9ef6-fb1551096339")) as ?newMandatarisUuid) . # add randomness, since UUID is buggy
+  BIND(IRI(CONCAT("http://data.lblod.info/id/mandatarissen/", ?newMandatarisUuid)) AS ?newMandataris) .
+}
