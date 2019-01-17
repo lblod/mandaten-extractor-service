@@ -13,6 +13,8 @@ PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX pav:  <http://purl.org/pav/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX nfo: <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#>
+PREFIX eli: <http://data.europa.eu/eli/ontology#>
+PREFIX dct: <http://purl.org/dc/terms/>
 `;
 
 async function removeTempGraph(graph) {
