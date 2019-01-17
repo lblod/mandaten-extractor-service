@@ -5,7 +5,9 @@ CONSTRUCT {
               ?lp ?lo.
 ?mandataris org:hasMembership ?lidmaatschap.
 ?tijdsinterval ?tp ?to.
-
+?fractie ext:generatedFrom "mandaten-extractor-service".
+?lidmaatschap ext:generatedFrom "mandaten-extractor-service".
+?tijdsinterval ext:generatedFrom "mandaten-extractor-service".
 }
 WHERE {
 GRAPH $tmpGraph {
