@@ -23,5 +23,4 @@
     VALUES ?mandaatRelatie { mandaat:bekrachtigtAanstellingVan ext:bekrachtigtAanstellingVan}
     VALUES ?type { besluit:Artikel besluit:Besluit }
     }
-    ?mandaat ?p ?o.
   }
