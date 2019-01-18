@@ -1,27 +1,35 @@
 CONSTRUCT {
-?fractie a mandaat:Fractie;
-         ?p ?o.
-?lidmaatschap a org:Membership;
-              ?lp ?lo.
-?mandataris org:hasMembership ?lidmaatschap.
-?tijdsinterval ?tp ?to.
-?fractie ext:generatedFrom "mandaten-extractor-service".
-?lidmaatschap ext:generatedFrom "mandaten-extractor-service".
-?tijdsinterval ext:generatedFrom "mandaten-extractor-service".
+    ?fractie a mandaat:Fractie.
+    ?lidmaatschap a org:Membership.
+    ?periode a <http://purl.org/dc/terms/PeriodOfTime>.
+
+    ?mandataris <http://www.w3.org/ns/org#hasMembership> ?lidmaatschap.
+    ?lidmaatschap <http://www.w3.org/ns/org#memberDuring> ?periode.
+    ?periode <http://data.vlaanderen.be/ns/generiek#begin> ?begin.
+    ?lidmaatschap <http://www.w3.org/ns/org#organisation> ?fractie.
+    ?fractie <http://mu.semte.ch/vocabularies/ext/isFractietype> ?type.
+    ?fractie <http://www.w3.org/ns/org#memberOf> ?bestuursorgaan.
+    ?fractie <http://www.w3.org/ns/org#linkedTo> ?eenheid.
+    ?fractie <https://www.w3.org/ns/regorg#legalName> ?naam.
+
+    ?fractie ext:generatedFrom "mandaten-extractor-service".
+    ?lidmaatschap ext:generatedFrom "mandaten-extractor-service".
+    ?periode ext:generatedFrom "mandaten-extractor-service".
 }
 WHERE {
-GRAPH $tmpGraph {
-  ?fractie a mandaat:Fractie;
-           ?p ?o.
-  OPTIONAL {
-    ?lidmaatschap org:organisation ?fractie;
-                  ?lp ?lo.
-    ?mandataris org:hasMembership ?lidmaatschap.
+  GRAPH $tmpGraph {
+      ?fractie a mandaat:Fractie.
+      ?lidmaatschap a org:Membership.
+      OPTIONAL { ?periode a <http://purl.org/dc/terms/PeriodOfTime>. }
+
+      ?mandataris <http://www.w3.org/ns/org#hasMembership> ?lidmaatschap.
+      OPTIONAL { ?lidmaatschap <http://www.w3.org/ns/org#memberDuring> ?periode.}
+      ?lidmaatschap <http://www.w3.org/ns/org#organisation> ?fractie.
+
+      OPTIONAL { ?periode <http://data.vlaanderen.be/ns/generiek#begin> ?begin. }
+      OPTIONAL { ?fractie <http://mu.semte.ch/vocabularies/ext/isFractietype> ?type. }
+      ?fractie <http://www.w3.org/ns/org#memberOf> ?bestuursorgaan.
+      ?fractie <http://www.w3.org/ns/org#linkedTo> ?eenheid.
+      OPTIONAL { ?fractie <http://www.w3.org/ns/regorg#legalName> ?naam. }
   }
-  OPTIONAL {
-   ?lidmaatschap org:organisation ?fractie;
-                 org:memberDuring ?tijdsinterval.
-   ?tijdsinterval ?tp ?to.
-   }
-}
 }
