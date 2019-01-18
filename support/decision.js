@@ -38,7 +38,7 @@ async function unprocessedDecisionsExist() {
 async function getDecisions() {
   const result =  (await query(`
     ${PREFIXES}
-    SELECT (?decision as ?uri) ?id ?content ?orgaan
+    SELECT DISTINCT (?decision as ?uri) ?id ?content ?orgaan
     WHERE {
       ?decision a besluit:Besluit;
                 mu:uuid ?id.
