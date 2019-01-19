@@ -3,7 +3,7 @@ CONSTRUCT {
     ?newMandataris a mandaat:Mandataris;
                 org:holds ?mandaat;
                 mandaat:isBestuurlijkeAliasVan ?persoon;
-                mu:uuid ?uuid;
+                mu:uuid ?newMandatarisUuid;  #Derived uuid since enforceUuid does not work here.
                 mandaat:start ?start;
                 mandaat:einde ?einde;
                 ext:generatedFrom ext:mandatenExtractorService;

@@ -10,7 +10,10 @@ CONSTRUCT {
     ?fractie <http://mu.semte.ch/vocabularies/ext/isFractietype> ?type.
     ?fractie <http://www.w3.org/ns/org#memberOf> ?bestuursorgaan.
     ?fractie <http://www.w3.org/ns/org#linkedTo> ?eenheid.
-    ?fractie <https://www.w3.org/ns/regorg#legalName> ?naam.
+    ?fractie <http://www.w3.org/ns/regorg#legalName> ?naam.
+    ?fractie mu:uuid ?fUuid.
+    ?lidmaatschap mu:uuid ?lUuid.
+    ?periode mu:uuid ?pUuid.
 
     ?fractie ext:generatedFrom ext:mandatenExtractorService.
     ?lidmaatschap ext:generatedFrom ext:mandatenExtractorService.
@@ -19,6 +22,9 @@ CONSTRUCT {
 WHERE {
   GRAPH $tmpGraph {
       ?fractie a mandaat:Fractie.
+      OPTIONAL { ?fractie mu:uuid ?fUuid. }
+      OPTIONAL { ?lidmaatschap mu:uuid ?lUuid. }
+      OPTIONAL { ?periode mu:uuid ?pUuid. }
       ?lidmaatschap a org:Membership.
       OPTIONAL { ?periode a <http://purl.org/dc/terms/PeriodOfTime>. }
 
