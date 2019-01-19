@@ -16,7 +16,7 @@ CONSTRUCT {
     ?newMandataris mandaat:start ?start.
     ?newMandataris mandaat:einde ?einde.
     ?newMandataris mandaat:status ?status.
-    ?newMandataris ext:generatedFrom "mandaten-extractor-service".
+    ?newMandataris ext:generatedFrom ext:mandatenExtractorService.
 }
 WHERE {
       GRAPH $tmpGraph {

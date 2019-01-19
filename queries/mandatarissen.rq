@@ -5,7 +5,7 @@
                   mu:uuid ?uuid;
                   mandaat:start ?start;
                   mandaat:einde ?einde;
-                  ext:generatedFrom "mandaten-extractor-service";
+                  ext:generatedFrom ext:mandatenExtractorService;
                   mandaat:status ?status.
   }
   WHERE {

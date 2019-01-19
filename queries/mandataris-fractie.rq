@@ -12,9 +12,9 @@ CONSTRUCT {
     ?fractie <http://www.w3.org/ns/org#linkedTo> ?eenheid.
     ?fractie <https://www.w3.org/ns/regorg#legalName> ?naam.
 
-    ?fractie ext:generatedFrom "mandaten-extractor-service".
-    ?lidmaatschap ext:generatedFrom "mandaten-extractor-service".
-    ?periode ext:generatedFrom "mandaten-extractor-service".
+    ?fractie ext:generatedFrom ext:mandatenExtractorService.
+    ?lidmaatschap ext:generatedFrom ext:mandatenExtractorService.
+    ?periode ext:generatedFrom ext:mandatenExtractorService.
 }
 WHERE {
   GRAPH $tmpGraph {
